@@ -379,7 +379,11 @@ func openBrowser(u string) {
 	var err error
 	switch runtime.GOOS {
 	case "linux":
-		err = exec.Command("xdg-open", u).Start()
+		if err = exec.Command("xdg-open", u).Start(); err != nil {
+			err = exec.Command("am", "start", "--user", "0",
+				"-a", "android.intent.action.VIEW",
+				"-d", u).Start()
+		}
 	case "windows":
 		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", u).Start()
 	case "darwin":
